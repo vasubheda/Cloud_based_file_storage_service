@@ -1,0 +1,10 @@
+fastapi
+motor
+beanie
+jose
+passlib
+uvicorn
+pydantic
+jwt
+bcrypt
+httpx
