@@ -5,6 +5,8 @@ jose
 passlib
 uvicorn
 pydantic
-jwt
+pydantic-settings
+pyjwt
 bcrypt
 httpx
+email-validator
