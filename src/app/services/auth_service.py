@@ -1,11 +1,16 @@
-from datetime import datetime, timedelta
-import jwt
-from jose import JWTError
-from app.config.settings import settings
+from fastapi import HTTPException
+from app.repositories.user_repository import UserRepository
+from app.utils.security import verify_password, create_jwt_token
+from app.models.schemas.user_schema import LoginRequest, LoginResponse
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
-def create_access_token(data: dict):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
-    return encoded_jwt
+class AuthService:
+    @staticmethod
+    async def authenticate_user(data: LoginRequest, db: AsyncIOMotorDatabase):
+        user = await UserRepository.get_user_by_email(data.email, db)
+
+        if not user or not verify_password(data.password, user["password_hash"]):
+            raise HTTPException(status_code=401, detail="Invalid email or password")
+
+        token = create_jwt_token({"user_id": str(user["_id"]), "role": user["role"]})
+        return LoginResponse(access_token=token, token_type="bearer")

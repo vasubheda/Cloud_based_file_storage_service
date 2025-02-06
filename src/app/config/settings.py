@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
     class Config:
-        env_file = "/Users/vishwasbheda/Documents/Tasks/Cloud based file storage service/src/.env"
+        env_file = ".env"
 
 # Load settings
 settings = Settings()
